@@ -31,7 +31,7 @@
       to { transform: translateY(-100vh) scale(1.5); opacity: 0; }
     }
 
-    /* Teddy bobbing animation from side to side */
+    /* Teddy bobbing side-to-side */
     @keyframes peek-left {
       0%, 100% { transform: translateY(-50%) translateX(0); }
       50% { transform: translateY(-50%) translateX(5px); }
@@ -40,17 +40,108 @@
     .teddy-animate {
       animation: peek-left 2s infinite ease-in-out;
     }
+
+    /* Optional: floating hearts from teddy's hand */
+    .mini-heart {
+      position: absolute;
+      font-size: 16px;
+      animation: floatUpMini 3s linear forwards;
+      opacity: 0.9;
+    }
+
+    @keyframes floatUpMini {
+      from { transform: translateY(0) scale(1); opacity: 1; }
+      to { transform: translateY(-50vh) scale(1.3); opacity: 0; }
+    }
   </style>
 </head>
 <body class="bg-pink-100 min-h-screen flex items-center justify-center relative">
 
   <!-- Floating hearts container -->
   <div id="hearts-container" class="fixed inset-0 pointer-events-none overflow-hidden"></div>
+  <div id="mini-hearts-container" class="fixed inset-0 pointer-events-none overflow-hidden"></div>
 
-  <!-- Teddy peeking from left of the card -->
-  <img src="A_digital_illustration_of_an_adorable_teddy_bear_p.png" 
+  <!-- Teddy peeking from left -->
+  <img src="teddy.png" 
        alt="cute teddy" 
        class="absolute left-0 bottom-1/2 -translate-y-1/2 w-32 z-0 teddy-animate" />
 
   <!-- Valentine card -->
   <div class="text-center text-pink-500 p-10 rounded-3xl bg-white/70 backdrop-blur-md shadow-xl w-80 relative z-10">
+
+    <!-- Question -->
+    <div id="questionSection">
+      <h1 class="text-2xl font-semibold mb-6">Will you be my Valentine? 💖</h1>
+      <div class="mt-8 flex justify-center gap-6">
+        <button id="yesBtn" class="px-6 py-2 rounded-full bg-pink-400 text-white font-semibold hover:bg-pink-500 transition duration-300">Yes 💖</button>
+        <button id="noBtn" class="px-6 py-2 rounded-full bg-gray-200 text-gray-600 font-semibold hover:bg-gray-300 transition-transform duration-300 relative">No</button>
+      </div>
+    </div>
+
+    <!-- Love message -->
+    <div id="love" class="hidden">
+      <h2 class="text-2xl font-semibold text-pink-600 mb-4">Yayyy!!! 💘</h2>
+      <p class="text-lg">You just made me the happiest person ever 🥰<br>Happy Valentine’s Day, my love 💖</p>
+    </div>
+
+  </div>
+
+  <!-- Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const noBtn = document.getElementById("noBtn");
+      const yesBtn = document.getElementById("yesBtn");
+      const questionSection = document.getElementById("questionSection");
+      const loveMessage = document.getElementById("love");
+      const heartsContainer = document.getElementById("hearts-container");
+      const miniHeartsContainer = document.getElementById("mini-hearts-container");
+      let heartsStarted = false;
+
+      // NO button runs away
+      noBtn.addEventListener("mouseenter", () => {
+        const randomX = Math.floor(Math.random() * 200) - 100;
+        const randomY = Math.floor(Math.random() * 200) - 100;
+        noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+      });
+
+      // YES button shows love message + floating hearts
+      yesBtn.addEventListener("click", () => {
+        questionSection.classList.add("hidden");
+        loveMessage.classList.remove("hidden");
+
+        if (!heartsStarted) {
+          setInterval(createHeart, 300);
+          setInterval(createMiniHeart, 500); // teddy hearts
+          heartsStarted = true;
+        }
+      });
+
+      // Create floating hearts from top
+      function createHeart() {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerText = "💖";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+        heartsContainer.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 5000);
+      }
+
+      // Create mini hearts from teddy's hand
+      function createMiniHeart() {
+        const heart = document.createElement("div");
+        heart.classList.add("mini-heart");
+        heart.innerText = "💖";
+        heart.style.left = "80px"; // slightly right of teddy image
+        heart.style.bottom = "50%";
+        heart.style.animationDuration = Math.random() * 1 + 2 + "s";
+        miniHeartsContainer.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 3000);
+      }
+    });
+  </script>
+
+</body>
+</html>
